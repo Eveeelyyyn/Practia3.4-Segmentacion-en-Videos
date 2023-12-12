@@ -40,3 +40,27 @@ while True:
     cv2.imshow('Diferencia', filtrado)
     cv2.imshow('Objetos en Movimiento', objetos)
     cv2.imshow('Fondo Estático', fondo)
+    
+    # Actualizar las imágenes acumulativas
+    cv2.accumulateWeighted(frame_actual, fondo_acumulado, 0.01, mask=cv2.bitwise_not(filtrado))
+    cv2.accumulateWeighted(frame_actual, objetos_acumulados, 0.01, mask=filtrado)
+    
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Liberar recursos de video
+video.release()
+
+# Convertir las imágenes acumulativas a uint8 para visualización
+fondo_resultante = cv2.convertScaleAbs(fondo_acumulado)
+objetos_resultantes = cv2.convertScaleAbs(objetos_acumulados)
+
+# Mostrar o guardar las imágenes resultantes
+cv2.imshow('Fondo resultante', fondo_resultante)
+cv2.imshow('Objetos resultantes', objetos_resultantes)
+cv2.waitKey(0)
+
+# Cerrar todas las ventanas abiertas por OpenCV
+cv2.destroyAllWindows()
+
