@@ -21,3 +21,22 @@ while True:
 
     # Convertir frame actual a escala de grises
     frame_actual_gris = cv2.cvtColor(frame_actual, cv2.COLOR_BGR2GRAY)
+
+    # 3. Realizar la sustracción de imágenes
+    diferencia = cv2.absdiff(imagen_referencia_gris, frame_actual_gris)
+
+    # 4. Umbralizar
+    umbralizado = umbral.threshold(diferencia, 5)
+
+    # 5. Filtrar ruido
+    kernel = np.ones((8,8), np.uint8)
+    filtrado = cv2.morphologyEx(umbralizado, cv2.MORPH_OPEN, kernel)
+
+    # 6. Extraer objetos y fondo
+    objetos = cv2.bitwise_and(frame_actual, frame_actual, mask=filtrado)
+    fondo = cv2.bitwise_and(frame_actual, frame_actual, mask=cv2.bitwise_not(filtrado))
+
+    # Mostrar el resultado
+    cv2.imshow('Diferencia', filtrado)
+    cv2.imshow('Objetos en Movimiento', objetos)
+    cv2.imshow('Fondo Estático', fondo)
